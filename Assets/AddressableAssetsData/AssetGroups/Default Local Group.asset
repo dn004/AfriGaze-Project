@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_GUID: 66552afd7946f754d9e360fd9e107ac3
+  m_SerializeEntries:
+  - m_GUID: 234328319d0a7384fa0484297a6e3e6f
+    m_Address: Assets/Videos/Pond.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 442d1b0f87722ae4991baff5b11fee21
+    m_Address: Assets/Videos/Picnic or Pond.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 52d1087ba46355643bd4f258f3a3f986
+    m_Address: Assets/Videos/Number 3.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8095a04127a4a524382d6dbff0a3d221
+    m_Address: Assets/Videos/Number 1.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9bd799749e496a94382255405893d76c
+    m_Address: Assets/Videos/Number 2.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: efd52174545b2e443b617ffbf4c789b1
+    m_Address: Assets/Videos/Picnic Area.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: c329f1ff54ca5b440920723e03de8831, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 8b0a287133a4f8648b3bdd7d9f95302a, type: 2}
+    - {fileID: 11400000, guid: 60b652fa9fcf9e44d802122483a2d21c, type: 2}

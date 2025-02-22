@@ -5,11 +5,16 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Collections;
 using Unity.XR.CoreUtils;
-using UnityEditor.UIElements;
+using UnityEngine.Video;
+using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceProviders;
+
 
 public class TourManager : MonoBehaviour
 {
+    
 
+    #region EXTRA DEFINATIONS
     [System.Serializable]
     public class PARKINFO
     {
@@ -18,6 +23,7 @@ public class TourManager : MonoBehaviour
         public string parkName;
         public string headerName;
         public string information;
+        public string trailerText;
         public AudioClip clips;
 
     }
@@ -29,7 +35,10 @@ public class TourManager : MonoBehaviour
         NYUNGWE = 1,
     }
 
+    #endregion
 
+
+    #region VARIABLES
     [Header("CORE BUTTONS")]
     [Space(20)]
     public Button enterWelcomeBtn;
@@ -50,8 +59,14 @@ public class TourManager : MonoBehaviour
     [Header("EXTRA STUFF")]
     [Space(20)]
     public AudioSource AudioPlayer;
+    public VideoPlayer videoPlayer;
     public Sprite enabledSprite;
     public Sprite disabledSprite;
+
+
+    [Header("ADDRESSABLE REFERENCES")]
+    [Space(20)]
+    public List<AssetReference> assets;
 
 
     [Header("INFORMATION FOR PARKS")]
@@ -61,14 +76,21 @@ public class TourManager : MonoBehaviour
     private PARKINFO currentPark;
 
 
+    #endregion
+
+    private void processVideo()
+    {
+       
+    }
+
     private void Start()
     {
-
+        StartExperience();
     }
 
     private void StartExperience()
     {
-
+        ShowStartingPanel();
     }
 
     private void ShowStartingPanel()
@@ -105,16 +127,20 @@ public class TourManager : MonoBehaviour
 
     private void ShowSpecificDestionation(PARKINFO park)
     {
+        specificDesitnationPanel.SetActive(true);
+
         specificDesitnationPanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
         {
             destinationPanel.SetActive(true);
             specificDesitnationPanel.SetActive(false);
+            ShowDestinationPanel();
         });
 
         specificDesitnationPanel.GetNamedChild("ExitButton").GetComponent<Button>().onClick.AddListener(() =>
         {
             specificDesitnationPanel.SetActive(false);
-            selectionOfTrackPanel.SetActive(true);
+            ShowSelectionDestinationPanels();
+            AudioPlayer.Stop();
         });
 
         GameObject toggleObj = specificDesitnationPanel.GetNamedChild("volume");
@@ -141,7 +167,7 @@ public class TourManager : MonoBehaviour
             specificDesitnationPanel.GetNamedChild("CardImage").GetComponent<Image>().sprite = park.cardSprite;
 
 
-            specificDesitnationPanel.GetNamedChild("parkName").GetComponent<TextMeshProUGUI>().text = park.parkName;
+            specificDesitnationPanel.GetNamedChild("ParkName").GetComponent<TextMeshProUGUI>().text = park.parkName;
             specificDesitnationPanel.GetNamedChild("ParkImage").GetComponent<Image>().sprite = park.sideSprite;
 
         }
@@ -152,13 +178,86 @@ public class TourManager : MonoBehaviour
     private void ShowDestinationPanel()
     {
         // bind the 3 buttons to listeners for various actions based on the current park selected.
+        {
+            destinationPanel.GetNamedChild("Experience").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                // move to experience panel
+                ShowExperiencePanel();
+                destinationPanel.SetActive(false);
+            });
+
+            destinationPanel.GetNamedChild("trailer").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                // move to trailer panel
+                ShowTrailerPanel();
+                destinationPanel.SetActive(false);
+            });
+
+            destinationPanel.GetNamedChild("Back").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                // show previous master menu
+                destinationPanel.SetActive(false);
+                ShowSpecificDestionation(currentPark);
+            });
+        }
     }
 
-
-    private void SetupEntryPanel()
+    private void ShowTrailerPanel()
     {
+        trailerPanel.SetActive(true);
 
+        {
+            trailerPanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                // launch the trailerVideo
+            });
+        }
+
+        {
+            trailerPanel.GetNamedChild("ExitBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ShowDestinationPanel();
+                destinationPanel.SetActive(true);
+                trailerPanel.SetActive(false);
+            });
+        }
+
+        {
+            string fullText = "<b> Trailer Mode </b>" + "\n" + "<size=8>" + currentPark.trailerText  + "</size>";
+            trailerPanel.GetNamedChild("TrailerText").GetComponent<TextMeshProUGUI>().text = fullText;
+        }
+
+        {
+            trailerPanel.GetNamedChild("CardImage").GetComponent<Image>().sprite = currentPark.cardSprite;
+        }
     }
+
+    private void ShowExperiencePanel()
+    {
+        experiencePanel.SetActive(true);
+
+        {
+            experiencePanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                // launch the experience
+            });
+        }
+
+        {
+            experiencePanel.GetNamedChild("ExitBtn").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ShowDestinationPanel();
+                destinationPanel.SetActive(true);
+                experiencePanel.SetActive(false);
+            });
+        }
+
+        {
+            experiencePanel.GetNamedChild("CardImage").GetComponent<Image>().sprite = currentPark.cardSprite;
+        }
+    }
+
+
 }
 
 
