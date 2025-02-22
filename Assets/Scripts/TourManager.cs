@@ -8,6 +8,9 @@ using Unity.XR.CoreUtils;
 using UnityEngine.Video;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceProviders;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using System;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 
 public class TourManager : MonoBehaviour
@@ -25,7 +28,18 @@ public class TourManager : MonoBehaviour
         public string information;
         public string trailerText;
         public AudioClip clips;
+        public PARKS parks;
 
+    }
+
+    public enum LOCATIONS : Int16
+    {
+        ONE = 0,
+        TWO = 1,
+        THREE =2,
+        PICNIC = 3,
+        PICNICORPOND = 4,
+        POND = 5
     }
 
 
@@ -54,7 +68,7 @@ public class TourManager : MonoBehaviour
     public GameObject destinationPanel;
     public GameObject trailerPanel;
     public GameObject experiencePanel;
-    public GameObject hotspotPanel;
+    public GameObject hotspotPrefab;
 
     [Header("EXTRA STUFF")]
     [Space(20)]
@@ -62,7 +76,7 @@ public class TourManager : MonoBehaviour
     public VideoPlayer videoPlayer;
     public Sprite enabledSprite;
     public Sprite disabledSprite;
-
+    public Transform playerTransform;
 
     [Header("ADDRESSABLE REFERENCES")]
     [Space(20)]
@@ -78,9 +92,30 @@ public class TourManager : MonoBehaviour
 
     #endregion
 
+    private void LoadAddressable(AssetReference reference)
+    {
+        AsyncOperationHandle<VideoClip> operation = Addressables.LoadAssetAsync<VideoClip>(reference);
+        operation.Completed += Operation_Completed;
+
+    }
+
+    private void Operation_Completed(AsyncOperationHandle<VideoClip> obj)
+    {
+        if(obj.Status == AsyncOperationStatus.Succeeded)
+        {
+            videoPlayer.clip = obj.Result;
+            videoPlayer.Prepare();
+        }
+    }
+
     private void processVideo()
     {
        
+    }
+
+    private void SetupHotspotPrefab(string name)
+    {
+
     }
 
     private void Start()
@@ -240,6 +275,23 @@ public class TourManager : MonoBehaviour
             experiencePanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
             {
                 // launch the experience
+               
+
+                switch (currentPark.parks)
+                {
+                    case PARKS.NYANDUNGU:
+                        experiencePanel.SetActive(false);
+                        LoadAddressable(assets[(int)LOCATIONS.ONE]);
+                        SpawnHotRight();
+                        SpawnHotLeft();
+                        break;
+                    case PARKS.NYUNGWE:
+                        experiencePanel.SetActive(false);
+                        LoadAddressable(assets[(int)LOCATIONS.PICNIC]);
+                        SpawnHotRight();
+                        break;
+                }
+
             });
         }
 
@@ -255,6 +307,16 @@ public class TourManager : MonoBehaviour
         {
             experiencePanel.GetNamedChild("CardImage").GetComponent<Image>().sprite = currentPark.cardSprite;
         }
+    }
+
+    private void SpawnHotRight()
+    {
+        GameObject obj = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(1f, 0.5f, 2f), Quaternion.identity);
+    }
+
+    private void SpawnHotLeft()
+    {
+        GameObject obj = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(-1f, 0.5f, -2f), Quaternion.identity);
     }
 
 
