@@ -54,9 +54,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8871856745389104958}
     m_Modifications:
+    - target: {fileID: 40971958700568746, guid: f734684b68da4654c8f4d6aa45d8bfcd, type: 3}
+      propertyPath: m_Name
+      value: Next
+      objectReference: {fileID: 0}
     - target: {fileID: 2472489343107171540, guid: f734684b68da4654c8f4d6aa45d8bfcd, type: 3}
       propertyPath: m_Name
       value: InSceneHotspotsCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 2508845785184278731, guid: f734684b68da4654c8f4d6aa45d8bfcd, type: 3}
+      propertyPath: m_Name
+      value: location
       objectReference: {fileID: 0}
     - target: {fileID: 4157730267784597718, guid: f734684b68da4654c8f4d6aa45d8bfcd, type: 3}
       propertyPath: m_Pivot.x

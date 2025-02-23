@@ -13036,6 +13036,7 @@ MonoBehaviour:
   trailerPanel: {fileID: 557230111}
   experiencePanel: {fileID: 96978431}
   hotspotPrefab: {fileID: 5403763659913503307, guid: 708c3af2fae44034fb2aa0fe3ae32b04, type: 3}
+  hotspotExitPrefab: {fileID: 5732122253347689543, guid: 6196b4c43bc316a469c9a8311900b650, type: 3}
   AudioPlayer: {fileID: 406841172}
   videoPlayer: {fileID: 50228054}
   enabledSprite: {fileID: 21300000, guid: d7affc3786e02534fb5d42d294154c95, type: 3}
@@ -78942,6 +78943,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1888054653}
   m_CullTransparentMesh: 1
+--- !u!1 &1953500747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1953500748}
+  m_Layer: 0
+  m_Name: ---------TOUR---------------
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1953500748
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1953500747}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1978109716
 GameObject:
   m_ObjectHideFlags: 0
@@ -80270,3 +80302,4 @@ SceneRoots:
   - {fileID: 406841173}
   - {fileID: 1612095247}
   - {fileID: 268171395}
+  - {fileID: 1953500748}
