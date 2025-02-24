@@ -1,55 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using NUnit.Framework;
 using System.Collections.Generic;
-using System.Collections;
 using Unity.XR.CoreUtils;
 using UnityEngine.Video;
 using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceProviders;
-using UnityEngine.AddressableAssets.ResourceLocators;
-using System;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 
-public class TourManager : MonoBehaviour
+public partial class TourManager : MonoBehaviour
 {
 
 
-    #region EXTRA DEFINATIONS
-    [System.Serializable]
-    public class PARKINFO
-    {
-        public Sprite cardSprite;
-        public Sprite sideSprite;
-        public string parkName;
-        public string headerName;
-        public string information;
-        public string trailerText;
-        public AudioClip clips;
-        public PARKS parks;
-
-    }
-
-    public enum LOCATIONS : Int16
-    {
-        ONE = 0,
-        TWO = 1,
-        THREE = 2,
-        PICNIC = 3,
-        PICNICORPOND = 4,
-        POND = 5
-    }
-
-
-    public enum PARKS : int
-    {
-        NYANDUNGU = 0,
-        NYUNGWE = 1,
-    }
-
-    #endregion
 
 
     #region VARIABLES
@@ -111,15 +73,6 @@ public class TourManager : MonoBehaviour
         }
     }
 
-    private void processVideo()
-    {
-
-    }
-
-    private void SetupHotspotPrefab(string name)
-    {
-
-    }
 
     private void Start()
     {
