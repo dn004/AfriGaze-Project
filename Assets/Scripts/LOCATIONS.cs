@@ -10,9 +10,9 @@ public partial class TourManager
         ONE = 0,
         TWO = 1,
         THREE = 2,
-        PICNIC = 3,
+        POND = 3,
         PICNICORPOND = 4,
-        POND = 5
+        PICNIC = 5
     }
 
 

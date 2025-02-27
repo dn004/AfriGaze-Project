@@ -6,13 +6,10 @@ using Unity.XR.CoreUtils;
 using UnityEngine.Video;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-
+using System.Collections;
 
 public partial class TourManager : MonoBehaviour
 {
-
-
-
 
     #region VARIABLES
     [Header("CORE BUTTONS")]
@@ -32,6 +29,7 @@ public partial class TourManager : MonoBehaviour
     public GameObject experiencePanel;
     public GameObject hotspotPrefab;
     public GameObject hotspotExitPrefab;
+    
 
     [Header("EXTRA STUFF")]
     [Space(20)]
@@ -40,6 +38,11 @@ public partial class TourManager : MonoBehaviour
     public Sprite enabledSprite;
     public Sprite disabledSprite;
     public Transform playerTransform;
+    public Transform picnicPoint;
+    public Transform pondPoint;
+    public GameObject picnicTrailerObj;
+    public GameObject numberTrailerObj;
+    public GameObject generalSphere;
 
     [Header("ADDRESSABLE REFERENCES")]
     [Space(20)]
@@ -54,6 +57,10 @@ public partial class TourManager : MonoBehaviour
 
     private GameObject exitPrefab;
     private GameObject initLocationPrefab;
+
+    private Button[] btns;
+    private GameObject toggleObj;
+
 
     #endregion
 
@@ -97,67 +104,52 @@ public partial class TourManager : MonoBehaviour
     private void ShowSelectionDestinationPanels()
     {
         selectionOfTrackPanel.SetActive(true);
-        Button[] btns = selectionOfTrackPanel.GetComponentsInChildren<Button>();
-        btns[0].onClick.AddListener(() =>
-        {
-            // Nyandungu Eco Park
-            currentPark = parkInfo[(int)PARKS.NYANDUNGU];
-            ShowSpecificDestionation(currentPark);
-            selectionOfTrackPanel.SetActive(false);
-
-        });
-
-        btns[1].onClick.AddListener(() =>
-        {
-            // Nyungwe National Park
-            currentPark = parkInfo[(int)PARKS.NYUNGWE];
-            ShowSpecificDestionation(currentPark);
-            selectionOfTrackPanel.SetActive(false);
-        });
+        btns = selectionOfTrackPanel.GetComponentsInChildren<Button>();
+        btns[0].onClick.AddListener(SelectionNyandunguEcoPark);
+        btns[1].onClick.AddListener(SelectionNyungwe);
     }
+
+    private void SelectionNyungwe()
+    {
+        currentPark = parkInfo[(int)PARKS.NYUNGWE];
+        ShowSpecificDestionation(currentPark);
+        selectionOfTrackPanel.SetActive(false);
+        RemoveListenersSelection();
+    }
+
+    private void SelectionNyandunguEcoPark()
+    {
+        currentPark = parkInfo[(int)PARKS.NYANDUNGU];
+        ShowSpecificDestionation(currentPark);
+        selectionOfTrackPanel.SetActive(false);
+        RemoveListenersSelection();
+    }
+
+    // remove listeners
+    private void RemoveListenersSelection()
+    {
+        btns[0].onClick.RemoveListener(SelectionNyandunguEcoPark);
+        btns[1].onClick.RemoveListener(SelectionNyungwe);
+    }
+
 
     private void ShowSpecificDestionation(PARKINFO park)
     {
         specificDesitnationPanel.SetActive(true);
 
-        specificDesitnationPanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-        {
-            destinationPanel.SetActive(true);
-            specificDesitnationPanel.SetActive(false);
-            ShowDestinationPanel();
-        });
+        specificDesitnationPanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(NextShowSpecificationDestination);
 
-        specificDesitnationPanel.GetNamedChild("ExitButton").GetComponent<Button>().onClick.AddListener(() =>
-        {
-            specificDesitnationPanel.SetActive(false);
-            ShowSelectionDestinationPanels();
-            AudioPlayer.Stop();
-        });
+        specificDesitnationPanel.GetNamedChild("ExitButton").GetComponent<Button>().onClick.AddListener(ExitButtonSpecificationDestination);
 
-        GameObject toggleObj = specificDesitnationPanel.GetNamedChild("volume");
-        toggleObj.GetComponent<Toggle>().onValueChanged.AddListener((value) =>
-        {
-            if (value)
-            {
-                toggleObj.GetComponent<Image>().sprite = enabledSprite;
-                AudioPlayer.clip = park.clips;
-                AudioPlayer.loop = true;
-                AudioPlayer.Play();
-            }
-            else
-            {
-                toggleObj.GetComponent<Image>().sprite = disabledSprite;
-                AudioPlayer.Stop();
-            }
-        });
+        toggleObj = specificDesitnationPanel.GetNamedChild("volume");
+        currentPark = park;
+        toggleObj.GetComponent<Toggle>().onValueChanged.AddListener(ToggleChangeVolumeBinder);
 
         {
 
             string total = "<b>" + park.headerName + "</b><\n><size=8>" + park.information + "</size>";
             specificDesitnationPanel.GetNamedChild("MainContent").GetComponent<TextMeshProUGUI>().text = total;
             specificDesitnationPanel.GetNamedChild("CardImage").GetComponent<Image>().sprite = park.cardSprite;
-
-
             specificDesitnationPanel.GetNamedChild("ParkName").GetComponent<TextMeshProUGUI>().text = park.parkName;
             specificDesitnationPanel.GetNamedChild("ParkImage").GetComponent<Image>().sprite = park.sideSprite;
 
@@ -166,31 +158,86 @@ public partial class TourManager : MonoBehaviour
 
     }
 
+    private void ToggleChangeVolumeBinder(bool value)
+    {
+        if (value)
+        {
+            toggleObj.GetComponent<Image>().sprite = enabledSprite;
+            AudioPlayer.clip = currentPark.clips;
+            AudioPlayer.loop = true;
+            AudioPlayer.Play();
+        }
+        else
+        {
+            toggleObj.GetComponent<Image>().sprite = disabledSprite;
+            AudioPlayer.Stop();
+        }
+    }
+
+    private void ExitButtonSpecificationDestination()
+    {
+        specificDesitnationPanel.SetActive(false);
+        ShowSelectionDestinationPanels();
+        AudioPlayer.Stop();
+        RemoveListenersShowSpecification();
+    }
+
+    private void NextShowSpecificationDestination()
+    {
+        destinationPanel.SetActive(true);
+        specificDesitnationPanel.SetActive(false);
+        ShowDestinationPanel();
+        RemoveListenersShowSpecification();
+    }
+
+    // remove listeners
+    private void RemoveListenersShowSpecification()
+    {
+        toggleObj.GetComponent<Toggle>().onValueChanged.RemoveListener(ToggleChangeVolumeBinder);
+        specificDesitnationPanel.GetNamedChild("Next").GetComponent<Button>().onClick.RemoveListener(NextShowSpecificationDestination);
+        specificDesitnationPanel.GetNamedChild("ExitButton").GetComponent<Button>().onClick.RemoveListener(ExitButtonSpecificationDestination);
+    }
+    
+
     private void ShowDestinationPanel()
     {
         // bind the 3 buttons to listeners for various actions based on the current park selected.
         {
-            destinationPanel.GetNamedChild("Experience").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                // move to experience panel
-                ShowExperiencePanel();
-                destinationPanel.SetActive(false);
-            });
+            destinationPanel.GetNamedChild("Experience").GetComponent<Button>().onClick.AddListener(ShowDestinationPanelExperience);
 
-            destinationPanel.GetNamedChild("trailer").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                // move to trailer panel
-                ShowTrailerPanel();
-                destinationPanel.SetActive(false);
-            });
+            destinationPanel.GetNamedChild("trailer").GetComponent<Button>().onClick.AddListener(ShowDestinationTrailerPanel);
 
-            destinationPanel.GetNamedChild("Back").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                // show previous master menu
-                destinationPanel.SetActive(false);
-                ShowSpecificDestionation(currentPark);
-            });
+            destinationPanel.GetNamedChild("Back").GetComponent<Button>().onClick.AddListener(ShowDestinationBackPanel);
         }
+    }
+
+    private void RemoveListenersShowDestinationPanel()
+    {
+        destinationPanel.GetNamedChild("Experience").GetComponent<Button>().onClick.RemoveListener(ShowDestinationPanelExperience);
+
+        destinationPanel.GetNamedChild("trailer").GetComponent<Button>().onClick.RemoveListener(ShowDestinationTrailerPanel);
+
+        destinationPanel.GetNamedChild("Back").GetComponent<Button>().onClick.RemoveListener(ShowDestinationBackPanel);
+    }
+
+    private void ShowDestinationBackPanel()
+    {
+        // show previous master menu
+        destinationPanel.SetActive(false);
+        ShowSpecificDestionation(currentPark);
+    }
+
+    private void ShowDestinationTrailerPanel()
+    {
+        // move to trailer panel
+        ShowTrailerPanel();
+        destinationPanel.SetActive(false);
+    }
+
+    private void ShowDestinationPanelExperience()
+    {
+        ShowExperiencePanel();
+        destinationPanel.SetActive(false);
     }
 
     private void ShowTrailerPanel()
@@ -198,19 +245,12 @@ public partial class TourManager : MonoBehaviour
         trailerPanel.SetActive(true);
 
         {
-            trailerPanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                // launch the trailerVideo
-            });
+            trailerPanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(PlayTrailer);
+         
         }
 
         {
-            trailerPanel.GetNamedChild("ExitBtn").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                ShowDestinationPanel();
-                destinationPanel.SetActive(true);
-                trailerPanel.SetActive(false);
-            });
+            trailerPanel.GetNamedChild("ExitBtn").GetComponent<Button>().onClick.AddListener(ExitButtonTrailer);
         }
 
         {
@@ -223,46 +263,108 @@ public partial class TourManager : MonoBehaviour
         }
     }
 
+    private void ExitButtonTrailer()
+    {
+        ShowDestinationPanel();
+        destinationPanel.SetActive(true);
+        trailerPanel.SetActive(false);
+    }
+
+    private void PlayTrailer()
+    {
+        trailerPanel.SetActive(false);
+        generalSphere.SetActive(false);
+        switch (currentPark.parks)
+        {
+            case PARKS.NYANDUNGU:
+                StartCoroutine(showTrailerNumber());
+                break;
+            case PARKS.NYUNGWE:
+                StartCoroutine(showTrailerPicnic());
+                break;
+        }
+       
+    }
+
+    IEnumerator showTrailerNumber()
+    {
+        numberTrailerObj.SetActive(true);
+        yield return new WaitForSeconds(5);
+        numberTrailerObj.SetActive(false);
+        generalSphere.SetActive(true);
+        trailerPanel.SetActive(true);
+    }
+
+    IEnumerator showTrailerPicnic()
+    {
+        picnicTrailerObj.SetActive(true);
+        
+        yield return new WaitForSeconds(7);
+        picnicTrailerObj.SetActive(false);
+        generalSphere.SetActive(true);
+        trailerPanel.SetActive(true);
+
+    }
+
+    private void RemoveListenerShowTrailerPanel()
+    {
+        trailerPanel.GetNamedChild("Next").GetComponent<Button>().onClick.RemoveListener(PlayTrailer);
+        trailerPanel.GetNamedChild("ExitBtn").GetComponent<Button>().onClick.RemoveListener(ExitButtonTrailer);
+    }
+
     private void ShowExperiencePanel()
     {
         experiencePanel.SetActive(true);
 
         {
-            experiencePanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                // launch the experience
-
-
-                switch (currentPark.parks)
-                {
-                    case PARKS.NYANDUNGU:
-                        experiencePanel.SetActive(false);
-                        LoadAddressable(assets[(int)LOCATIONS.ONE]);
-                        SpawnHotRight("TWO");
-                        SpawnExitLocation();
-                        break;
-                    case PARKS.NYUNGWE:
-                        experiencePanel.SetActive(false);
-                        LoadAddressable(assets[(int)LOCATIONS.PICNIC]);
-                        SpawnHotRight("PICNICPOND");
-                        SpawnExitLocation();
-                        break;
-                }
-
-            });
+            experiencePanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(NextShowExperiencePanel);
+  
         }
 
         {
-            experiencePanel.GetNamedChild("ExitBtn").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                ShowDestinationPanel();
-                destinationPanel.SetActive(true);
-                experiencePanel.SetActive(false);
-            });
+            experiencePanel.GetNamedChild("ExitBtn").GetComponent<Button>().onClick.AddListener(ExitBtnShowExperiencePanel);
+      
         }
 
         {
             experiencePanel.GetNamedChild("CardImage").GetComponent<Image>().sprite = currentPark.cardSprite;
+        }
+    }
+
+
+    private void ExitBtnShowExperiencePanel()
+    {
+        ShowDestinationPanel();
+        destinationPanel.SetActive(true);
+        experiencePanel.SetActive(false);
+    }
+
+    private void ShowExperiencePanelRemoveListeners()
+    {
+        experiencePanel.GetNamedChild("Next").GetComponent<Button>().onClick.RemoveListener(NextShowExperiencePanel);
+        experiencePanel.GetNamedChild("ExitBtn").GetComponent<Button>().onClick.RemoveListener(ExitBtnShowExperiencePanel);
+    }
+
+    private void NextShowExperiencePanel()
+    {
+        // launch the experience
+        RemoveListenersShowDestinationPanel();
+        switch (currentPark.parks)
+        {
+            case PARKS.NYANDUNGU:
+                experiencePanel.SetActive(false);
+                LoadAddressable(assets[(int)LOCATIONS.ONE]);
+                SpawnHotRight("TWO");
+                SpawnExitLocation();
+                ShowExperiencePanelRemoveListeners();
+                break;
+            case PARKS.NYUNGWE:
+                experiencePanel.SetActive(false);
+                LoadAddressable(assets[(int)LOCATIONS.POND]);
+                SpawnHotRight("PICNICPOND");
+                SpawnExitLocation();
+                ShowExperiencePanelRemoveListeners();
+                break;
         }
     }
 
@@ -272,16 +374,27 @@ public partial class TourManager : MonoBehaviour
         initLocationPrefab = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(1f, 0.5f, 2f), Quaternion.identity);
 
         {
-            initLocationPrefab.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                SpawnSetupMidLevel();
-                DestroyN(initLocationPrefab.gameObject);
-                DestroyN(exitPrefab.gameObject);
-            });
+            initLocationPrefab.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(spawnHotRightBind);
 
             initLocationPrefab.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = location;
+           
         }
 
+       
+
+    }
+
+    private void spawnHotRightBind()
+    {
+        SpawnSetupMidLevel();
+        DestroyN(initLocationPrefab.gameObject);
+        DestroyN(exitPrefab.gameObject);
+        RemoveSpawnHotRightBind();
+    }
+
+    private void RemoveSpawnHotRightBind()
+    {
+        initLocationPrefab.GetNamedChild("Next").GetComponent<Button>().onClick.RemoveListener(spawnHotRightBind);
     }
 
     GameObject objS, objT, objE;
@@ -309,9 +422,10 @@ public partial class TourManager : MonoBehaviour
                                 Destroy(exitPrefab);
                                 
                                 LoadAddressable(assets[(int)LOCATIONS.ONE]);
-                                SpawnHotRight("ONE");
+                                SpawnHotRight("TWO");
                                 SpawnExitLocation();
                                 DestroyN(objE.gameObject);
+                               
 
                             });
 
@@ -327,8 +441,6 @@ public partial class TourManager : MonoBehaviour
 
 
                 }
-
-
 
                 {
                     // returning to base scene
@@ -354,26 +466,28 @@ public partial class TourManager : MonoBehaviour
             case PARKS.NYUNGWE:
 
                 LoadAddressable(assets[(int)LOCATIONS.PICNICORPOND]);
+
+
                 {
                     //moving to last scene
-                    objS = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(1f, 0.5f, 2f), Quaternion.identity);
+                    objS = Instantiate(hotspotPrefab, pondPoint.position, Quaternion.identity);
                     objS.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
                     {
+
                         LoadAddressable(assets[(int)LOCATIONS.POND]);
                         {
                             objE = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(-1f, 0.5f, -2f), Quaternion.identity);
                             objE.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
                             {
-                               
-                                experiencePanel.SetActive(false);
+                                Destroy(exitPrefab);
+                                
                                 LoadAddressable(assets[(int)LOCATIONS.PICNIC]);
                                 SpawnHotRight("PICNIC");
                                 SpawnExitLocation();
                                 DestroyN(objE.gameObject);
-
                             });
 
-                            objE.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = "PICNIC";
+                            objE.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = "POND";
                         }
 
                         DestroyN(objS.gameObject);
@@ -385,12 +499,10 @@ public partial class TourManager : MonoBehaviour
                  
                 }
 
-
-
                 {
                     // returning to base scene
 
-                    objT = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(-1f, 0.5f, -2f), Quaternion.identity);
+                    objT = Instantiate(hotspotPrefab,picnicPoint.position, Quaternion.identity);
                     objT.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
                     {
                         experiencePanel.SetActive(false);
@@ -414,24 +526,29 @@ public partial class TourManager : MonoBehaviour
     private void SpawnExitLocation()
     {
         exitPrefab = Instantiate(hotspotExitPrefab, playerTransform.position + new Vector3(-1f, 0.5f, -2f), Quaternion.identity);
-
         {
-            exitPrefab.GetNamedChild("Exit").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                ShowExperiencePanel();
-                // set the default skybox background here
-                LoadAddressable(assets[(int)LOCATIONS.PICNIC]);
-               
-                DestroyN(exitPrefab.gameObject);
-                DestroyN(initLocationPrefab.gameObject);
-                DestroyN(objT.gameObject);  
-                DestroyN(objE.gameObject);
-                DestroyN(objS.gameObject);
-                
-            });
+            exitPrefab.GetNamedChild("Exit").GetComponent<Button>().onClick.AddListener(CloseSpawnExitLocation);
         }
     }
 
+    private void CloseSpawnExitLocation()
+    {
+        ShowExperiencePanel();
+        // set the default skybox background here
+        LoadAddressable(assets[(int)LOCATIONS.PICNIC]);
+
+        DestroyN(exitPrefab.gameObject);
+        DestroyN(initLocationPrefab.gameObject);
+        DestroyN(objT.gameObject);
+        DestroyN(objE.gameObject);
+        DestroyN(objS.gameObject);
+        RemoveExitListener();
+    }
+
+    private void RemoveExitListener()
+    {
+        exitPrefab.GetNamedChild("Exit").GetComponent<Button>().onClick.RemoveListener(CloseSpawnExitLocation);
+    }
 
     private void DestroyN(GameObject obj)
     {
@@ -441,7 +558,6 @@ public partial class TourManager : MonoBehaviour
         }
        
     }
-
 
 }
 
