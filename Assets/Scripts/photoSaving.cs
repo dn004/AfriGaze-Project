@@ -16,8 +16,10 @@ public class photoSaving : MonoBehaviour
     public GameObject planeObject;
     public Material planeMaterial;
     public Camera targetCamera;
+
     public int captureWidth = 1920;
     public int captureHeight = 1080;
+
     public InputActionReference takePictureAction;
     public InputActionReference activateCamera;
     public InputActionReference loadPictureAction;
@@ -36,6 +38,7 @@ public class photoSaving : MonoBehaviour
     private int count = 0;
     private int currentCount = 0;
     private int countState;
+    private int imageIndexToLoad = 0;
 
     private void Awake()
     {
@@ -45,6 +48,8 @@ public class photoSaving : MonoBehaviour
         {
             countState = 0;
         }
+
+        count = countState;
 
     }
 
@@ -78,8 +83,6 @@ public class photoSaving : MonoBehaviour
         backBtn.onClick.AddListener(PreviousImage);
         viewPhotoCanvas.SetActive(false);
         cameraObject.SetActive(false);
- 
-
     }
 
     private void cameraActivation()
@@ -100,7 +103,7 @@ public class photoSaving : MonoBehaviour
 
     public void CaptureAndSave()
     {
-        if(!viewPhotoCanvas.activeInHierarchy)
+        if(!viewPhotoCanvas.activeInHierarchy && cameraObject.activeInHierarchy)
         {
             audioSource.PlayOneShot(cameraSound);
             cameraObject.SetActive(false);
@@ -126,6 +129,7 @@ public class photoSaving : MonoBehaviour
             
 
             SaveTextureToFile(screenShot, "CameraCapture_" + count + ".png");
+            imageIndexToLoad = count;
             count++;
 
 
@@ -151,15 +155,14 @@ public class photoSaving : MonoBehaviour
     IEnumerator showImage()
     {
         planeObject.SetActive(true);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3);
         planeObject.SetActive(false);
     }
 
     void LoadTempTexture()
     {
-        byte[] fileData = File.ReadAllBytes(Application.persistentDataPath + "/CameraCapture_0.png");
+        byte[] fileData = File.ReadAllBytes(Application.persistentDataPath + "/CameraCapture_" + imageIndexToLoad + ".png");
         Texture2D textureData = new Texture2D(2, 2);
-
 
         if (textureData.LoadImage(fileData))
         {
@@ -171,15 +174,32 @@ public class photoSaving : MonoBehaviour
 
     private void NextImage()
     {
+        
+        if (count < allTextures.Count)
+        {
+            count++;
+        }
+        else
+        {
+            count = 0;
+        }
+
         texturedSelection.texture = allTextures[count];
-        count++;
+     
+        photoText.text = currentCount + "/" + allTextures.Count.ToString();
     }
 
     private void PreviousImage()
     {
-        count--;
-        texturedSelection.texture = allTextures[count];
         
+        count--;
+        if(count < 0)
+        {
+            count = allTextures.Count - 1;
+        }
+        
+        texturedSelection.texture = allTextures[count];
+        photoText.text = currentCount + "/" + allTextures.Count.ToString();
     }
 
 
@@ -195,17 +215,19 @@ public class photoSaving : MonoBehaviour
             viewPhotoCanvas.SetActive(true);
             count = 0;
         }
-       
+
+        Debug.Log("countState : " + countState);
+        currentCount = countState;
 
         while (true)
         {
 
             try
             {
-                currentCount = countState;
+                
                 byte[] fileData = File.ReadAllBytes(Application.persistentDataPath + "/CameraCapture_" + currentCount + ".png");
                 Texture2D texture = new Texture2D(2, 2);
-
+                Debug.Log("CurrentCount : " + currentCount);
                 if (texture.LoadImage(fileData))
                 {
                     allTextures.Add(texture);
@@ -215,21 +237,24 @@ public class photoSaving : MonoBehaviour
                     Debug.LogError("Failed to add texture to elements");
                 }
 
-
-
             }catch(Exception e)
             {
-                countState = allTextures.Count;
+             
                 break;
             }
             
-            PlayerPrefs.SetInt("state", countState);
-            PlayerPrefs.Save();
+            
+          
             yield return new WaitForSeconds(0.01f);
             currentCount++;
         }
 
-       photoText.text = currentCount + "/" + allTextures.Count.ToString();
+        countState = allTextures.Count;
+        PlayerPrefs.SetInt("state", countState);
+        PlayerPrefs.Save();
+        Debug.Log("Images Saved Locally : " + allTextures.Count.ToString());
+
+        photoText.text = currentCount + "/" + allTextures.Count.ToString();
 
 
         yield return null;
