@@ -15,8 +15,18 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 66552afd7946f754d9e360fd9e107ac3
   m_SerializeEntries:
+  - m_GUID: 17279c8f1b6b94d4986814ab3638d291
+    m_Address: Assets/Videos/Trailer_Point.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 234328319d0a7384fa0484297a6e3e6f
     m_Address: Assets/Videos/Pond.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b8018f98101f1146bf7e8ed9b879652
+    m_Address: Assets/Videos/Point_C.mp4
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -30,6 +40,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b9961decb825474e8d30dfc4e9a61c4
+    m_Address: Assets/Videos/picnicTrailer.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8095a04127a4a524382d6dbff0a3d221
     m_Address: Assets/Videos/Number 1.mp4
     m_ReadOnly: 0
@@ -40,8 +55,23 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c05677207fedf9d47a164f5476a07328
+    m_Address: Assets/Videos/Point A.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1866c68fd0442f4abd7a92c95398d6b
+    m_Address: Assets/Videos/trailerNumbers.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: efd52174545b2e443b617ffbf4c789b1
     m_Address: Assets/Videos/Picnic Area.mp4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f634eb7556abb8044bc1fb98c8db2930
+    m_Address: Assets/Videos/Point_B.mp4
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

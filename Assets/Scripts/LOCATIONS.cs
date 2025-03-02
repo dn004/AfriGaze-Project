@@ -4,7 +4,6 @@
 public partial class TourManager
 {
   
-
     public enum LOCATIONS : Int16
     {
         ONE = 0,
@@ -12,10 +11,11 @@ public partial class TourManager
         THREE = 2,
         POND = 3,
         PICNICORPOND = 4,
-        PICNIC = 5
+        PICNIC = 5,
+        POINTA = 6,
+        POINTB = 7,
+        POINTC = 8
     }
-
-
 }
 
 

@@ -7,6 +7,7 @@ using UnityEngine.Video;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections;
+using UnityEngine.Events;
 
 public partial class TourManager : MonoBehaviour
 {
@@ -43,10 +44,17 @@ public partial class TourManager : MonoBehaviour
     public GameObject picnicTrailerObj;
     public GameObject numberTrailerObj;
     public GameObject generalSphere;
+    public GameObject simbaFirstSphere;
+    public GameObject picicFirstSphere;
 
     [Header("ADDRESSABLE REFERENCES")]
     [Space(20)]
     public List<AssetReference> assets;
+
+    [Header("Events")]
+    [Space(20)]
+    public UnityEvent StartExperienceParkEvent;
+    public UnityEvent StartExperienceSimbaCenterEvent;
 
 
     [Header("INFORMATION FOR PARKS")]
@@ -318,7 +326,7 @@ public partial class TourManager : MonoBehaviour
 
         {
             experiencePanel.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(NextShowExperiencePanel);
-  
+            
         }
 
         {
@@ -353,202 +361,40 @@ public partial class TourManager : MonoBehaviour
         {
             case PARKS.NYANDUNGU:
                 experiencePanel.SetActive(false);
+                // simba area
+
+                simbaFirstSphere.SetActive(true);
+                generalSphere.SetActive(false);
+                StartExperienceSimbaCenterEvent?.Invoke();
+
+
                 LoadAddressable(assets[(int)LOCATIONS.ONE]);
-                SpawnHotRight("TWO");
-                SpawnExitLocation();
                 ShowExperiencePanelRemoveListeners();
+
+
                 break;
             case PARKS.NYUNGWE:
+
+
                 experiencePanel.SetActive(false);
-                LoadAddressable(assets[(int)LOCATIONS.POND]);
-                SpawnHotRight("PICNICPOND");
-                SpawnExitLocation();
+                picicFirstSphere.SetActive(true);
+                generalSphere.SetActive(false);
+                StartExperienceParkEvent?.Invoke();
+
+              
                 ShowExperiencePanelRemoveListeners();
                 break;
         }
     }
 
-    private void SpawnHotRight(string location)
-    {
-        // first scene spawning
-        initLocationPrefab = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(1f, 0.5f, 2f), Quaternion.identity);
-
-        {
-            initLocationPrefab.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(spawnHotRightBind);
-
-            initLocationPrefab.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = location;
-           
-        }
-
-       
-
-    }
-
-    private void spawnHotRightBind()
-    {
-        SpawnSetupMidLevel();
-        DestroyN(initLocationPrefab.gameObject);
-        DestroyN(exitPrefab.gameObject);
-        RemoveSpawnHotRightBind();
-    }
-
-    private void RemoveSpawnHotRightBind()
-    {
-        initLocationPrefab.GetNamedChild("Next").GetComponent<Button>().onClick.RemoveListener(spawnHotRightBind);
-    }
-
-    GameObject objS, objT, objE;
-
-
-    public void SpawnSetupMidLevel()
-    {
-        switch (currentPark.parks)
-        {
-            case PARKS.NYANDUNGU:
-                //second scene
-         
-                LoadAddressable(assets[(int)LOCATIONS.TWO]);
-
-                {
-                    //moving to last scene
-                    objS = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(1f, 0.5f, 2f), Quaternion.identity);
-                    objS.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        LoadAddressable(assets[(int)LOCATIONS.THREE]);
-                        {
-                            objE = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(-1f, 0.5f, -2f), Quaternion.identity);
-                            objE.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-                            {
-                                Destroy(exitPrefab);
-                                
-                                LoadAddressable(assets[(int)LOCATIONS.ONE]);
-                                SpawnHotRight("TWO");
-                                SpawnExitLocation();
-                                DestroyN(objE.gameObject);
-                               
-
-                            });
-
-                            objE.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = "ONE";
-                            
-                        }
-
-                        DestroyN(objS.gameObject);
-                        DestroyN(objT.gameObject);
-                    });
-
-                    objS.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = "THREE";
-
-
-                }
-
-                {
-                    // returning to base scene
-
-                    objT = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(-1f, 0.5f, -2f), Quaternion.identity);
-                    objT.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        experiencePanel.SetActive(false);
-                        LoadAddressable(assets[(int)LOCATIONS.ONE]);
-                        SpawnHotRight("TWO");
-                        SpawnExitLocation();
-                        DestroyN(objT.gameObject);
-                        DestroyN(objE.gameObject);
-                        DestroyN(objS.gameObject);
-                    });
-
-                    objT.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = "ONE";
-                }
-
-
-
-                break;
-            case PARKS.NYUNGWE:
-
-                LoadAddressable(assets[(int)LOCATIONS.PICNICORPOND]);
-
-
-                {
-                    //moving to last scene
-                    objS = Instantiate(hotspotPrefab, pondPoint.position, Quaternion.identity);
-                    objS.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-                    {
-
-                        LoadAddressable(assets[(int)LOCATIONS.POND]);
-                        {
-                            objE = Instantiate(hotspotPrefab, playerTransform.position + new Vector3(-1f, 0.5f, -2f), Quaternion.identity);
-                            objE.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-                            {
-                                Destroy(exitPrefab);
-                                
-                                LoadAddressable(assets[(int)LOCATIONS.PICNIC]);
-                                SpawnHotRight("PICNIC");
-                                SpawnExitLocation();
-                                DestroyN(objE.gameObject);
-                            });
-
-                            objE.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = "POND";
-                        }
-
-                        DestroyN(objS.gameObject);
-                        DestroyN(objT.gameObject);
-
-                    });
-
-                    objS.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = "POND";
-                 
-                }
-
-                {
-                    // returning to base scene
-
-                    objT = Instantiate(hotspotPrefab,picnicPoint.position, Quaternion.identity);
-                    objT.GetNamedChild("Next").GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        experiencePanel.SetActive(false);
-                        LoadAddressable(assets[(int)LOCATIONS.PICNIC]);
-                        SpawnHotRight("PICNICPOND");
-                        SpawnExitLocation();
-                        DestroyN(objT.gameObject);
-                        DestroyN(objE.gameObject);
-                        DestroyN(objS.gameObject);
-                    });
-
-                    objT.GetNamedChild("location").GetComponent<TextMeshProUGUI>().text = "PICNIC";
-                }
-                break;
-        }
-
-        
-    }
-
-
-    private void SpawnExitLocation()
-    {
-        exitPrefab = Instantiate(hotspotExitPrefab, playerTransform.position + new Vector3(-1f, 0.5f, -2f), Quaternion.identity);
-        {
-            exitPrefab.GetNamedChild("Exit").GetComponent<Button>().onClick.AddListener(CloseSpawnExitLocation);
-        }
-    }
-
-    private void CloseSpawnExitLocation()
+    public void CloseCurrentExperience()
     {
         ShowExperiencePanel();
-        // set the default skybox background here
-        LoadAddressable(assets[(int)LOCATIONS.PICNIC]);
-
-        DestroyN(exitPrefab.gameObject);
-        DestroyN(initLocationPrefab.gameObject);
-        DestroyN(objT.gameObject);
-        DestroyN(objE.gameObject);
-        DestroyN(objS.gameObject);
-        RemoveExitListener();
+        generalSphere.SetActive(true);
+        simbaFirstSphere.SetActive(false);
+        picicFirstSphere.SetActive(false);
     }
 
-    private void RemoveExitListener()
-    {
-        exitPrefab.GetNamedChild("Exit").GetComponent<Button>().onClick.RemoveListener(CloseSpawnExitLocation);
-    }
 
     private void DestroyN(GameObject obj)
     {
