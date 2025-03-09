@@ -24,6 +24,7 @@ AfriGaze is a Virtual Reality (VR) application designed to revolutionize African
 
 3. **Build and Test**:
    - Connect your Meta VR headset to your PC.
+   - Set VR Graphic API to OpenXR && set a controller profile for Android
    - Go to `File > Build Settings`.
    - Select the target platform (e.g., Android for Oculus Quest).
    - Click `Build and Run` to deploy the application to your headset.
