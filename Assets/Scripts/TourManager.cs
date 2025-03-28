@@ -155,7 +155,7 @@ public partial class TourManager : MonoBehaviour
 
         {
 
-            string total = "<b>" + park.headerName + "</b><\n><size=8>" + park.information + "</size>";
+            string total = "<b>" + park.headerName + "</b> \n <size=8>" + park.information + "</size>";
             specificDesitnationPanel.GetNamedChild("MainContent").GetComponent<TextMeshProUGUI>().text = total;
             specificDesitnationPanel.GetNamedChild("CardImage").GetComponent<Image>().sprite = park.cardSprite;
             specificDesitnationPanel.GetNamedChild("ParkName").GetComponent<TextMeshProUGUI>().text = park.parkName;
